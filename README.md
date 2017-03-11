@@ -1,6 +1,6 @@
 # RAMEN RESTful API with MongoDB, Express and NodeJS
 
-Demostration of building restful API with devops techniques 
+Demostration of building restful API with devops techniques. This demo assumes you have a running mongoDB instance. You could uncomment the mongodb docker configuration in vagrantfile, but I would encourage you to get a free [mlab](https://mlab.com/) account. Mlab offer 500MB MongoDB database for free, and it's very easy to configure.  
 
 ## Prerequisite Installation using Vagrant
 
@@ -16,6 +16,16 @@ Clone the project to your development folder and create your Vagrant vm
     $ cd RESTful
     $ vagrant up
 
+Before running the app, you should add your mongodb credentials into ./mongodb/key.json in the following format 
+ 
+    {
+      "mongoHost": "localhost",
+      "mongoPort": "27018",
+      "mongoDatabase": "mydb",
+      "mongoUser": "user",
+      "mongoPass": "password"
+    }
+    
 Once the VM is up you can use it with:
 
     $ vagrant ssh
