@@ -70,10 +70,40 @@ Vagrant.configure("2") do |config|
     sudo npm install -g forever
     sudo ln -s "$(which nodejs)" /usr/bin/node
     # Install the Cloud Foundry CLI
-    wget -O cf-cli-installer_6.24.0_x86-64.deb 'https://cli.run.pivotal.io/stable?release=debian64&version=6.24.0&source=github-rel'
-    sudo dpkg -i cf-cli-installer_6.24.0_x86-64.deb
-    rm cf-cli-installer_6.24.0_x86-64.deb
+    # wget -O cf-cli-installer_6.24.0_x86-64.deb 'https://cli.run.pivotal.io/stable?release=debian64&version=6.24.0&source=github-rel'
+    # sudo dpkg -i cf-cli-installer_6.24.0_x86-64.deb
+    # rm cf-cli-installer_6.24.0_x86-64.deb
     # Install app dependencies
     cd /vagrant
+    npm install
   SHELL
+
+
+  ######################################################################
+  # Add MongoDB docker container
+  ######################################################################
+  #config.vm.provision "shell", inline: <<-SHELL
+    # Prepare mongoDB data share
+  #  sudo mkdir -p /var/lib/mongo/data
+  #  sudo chown vagrant:vagrant /var/lib/mongo/data
+  #SHELL
+
+  # Add mongoDB docker container
+  #config.vm.provision "docker" do |d|
+  #  d.pull_images "mongo"
+  #  d.run "mongo",
+  #    args: "--restart=always -d --name mongo -h mongo -v '/var/lib/mongo/data:/data/db' -p '27017:27017'"
+  #end
+
+  # initialize the mongoDB user 
+  #config.vm.provision "shell", inline: <<-SHELL
+  #  cd /vagrant
+  #  sudo docker cp create_mongo_admin.js mongo:/create_mongo_admin.js
+  #  sudo docker exec mongo mongo admin create_mongo_admin.js
+  #  sudo docker cp create_mongo_user.js mongo:/create_mongo_user.js
+  #  sudo docker exec mongo mongo admin create_mongo_user.js -u user1 -p yourpassword --authenticationDatabase admin
+  #SHELL
 end
+
+# to test if docker mongo is working: 
+# docker run -it --rm --link mongo:mongo mongo mongo -u user -p user mongo/admin
