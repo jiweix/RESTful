@@ -58,7 +58,7 @@ Vagrant.configure("2") do |config|
   end
 
   ######################################################################
-  # Setup a Python development environment
+  # Setup a NodeJS development environment
   ######################################################################
   config.vm.provision "shell", inline: <<-SHELL
     sudo apt-get update
@@ -67,12 +67,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y nodejs
     sudo apt-get install -y build-essential
     sudo apt-get -y autoremove
-    sudo npm install -g forever
     sudo ln -s "$(which nodejs)" /usr/bin/node
-    # Install the Cloud Foundry CLI
-    # wget -O cf-cli-installer_6.24.0_x86-64.deb 'https://cli.run.pivotal.io/stable?release=debian64&version=6.24.0&source=github-rel'
-    # sudo dpkg -i cf-cli-installer_6.24.0_x86-64.deb
-    # rm cf-cli-installer_6.24.0_x86-64.deb
     # Install app dependencies
     cd /vagrant
     npm install

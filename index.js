@@ -7,11 +7,6 @@ var application =   require('./applications.js');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({"extended" : false}));
 
-//app.configure(function () {
-//    app.use(express.logger('dev'));     /* 'default', 'short', 'tiny', 'dev' */
-//    app.use(express.bodyParser());
-//});
-
 app.get("/",function(req,res){
     res.json({"API name" : "application info",
               "url" : "/applications"});
