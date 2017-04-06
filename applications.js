@@ -7,13 +7,14 @@ const pass = key_str.mongoPass;
 const host = key_str.mongoHost;
 const port = key_str.mongoPort;
 const db = key_str.mongoDatabase;
+const NOT_FOUND_MESSAGE = { error: "Resource Not Exists" };
 
 // [START client]
 let uri = `mongodb://${user}:${pass}@${host}:${port}/${db}`;
 
 console.log(uri);
 
-// collection 
+// collection
 var cs_application_db;
 
 mongodb.MongoClient.connect(uri, (err, db) => {
@@ -33,7 +34,11 @@ exports.findById = function(req, res) {
       console.log("collection is null");
     }
     collection.findOne({ '_id': new ObjectID(id) }, function(err, item) {
-      res.send(item);
+      if (!item) {
+        res.status(404).send(NOT_FOUND_MESSAGE);
+      } else {
+        res.status(200).send(item);
+      }
     });
   });
 };
@@ -42,7 +47,7 @@ exports.findAll = function (req, res) {
   res.contentType('application/json');
   cs_application_db.collection('cs_application', function (err, collection) {
     collection.find().toArray(function (err, items) {
-      res.send(items);
+      res.status(200).send(items);
     });
   });
 };
@@ -54,10 +59,10 @@ exports.addApplication = function (req, res) {
   cs_application_db.collection('cs_application', function (err, collection) {
     collection.insert(application, { safe: true }, function (err, result) {
       if (err) {
-        res.send({ 'error': 'An error has occurred' });
+        res.status(400).send({ 'error': 'An error has occurred' });
       } else {
         console.log('Success: ' + JSON.stringify(result[0]));
-        res.send(result[0]);
+        res.status(201).send(result[0]);
       }
     });
   });
@@ -73,17 +78,16 @@ exports.updateApplication = function (req, res) {
     collection.update({ '_id': new ObjectID(id) }, application, { safe: true }, function (err, result) {
       if (err) {
         console.log('Error updating application: ' + err);
-        res.send({ 'error': 'An error has occurred' });
+        res.status(400).send({ 'error': 'An error has occurred' });
       } else {
         console.log('' + result + ' document(s) updated');
-        res.send(application);
+        res.status(200).send(application);
       }
     });
   });
 }
 
 exports.deleteApplication = function (req, res) {
-  res.contentType('application/json');
   var id = req.params.id;
   console.log('Deleting application: ' + id);
   cs_application_db.collection('cs_application', function (err, collection) {
@@ -92,7 +96,7 @@ exports.deleteApplication = function (req, res) {
         res.send({ 'error': 'An error has occurred - ' + err });
       } else {
         console.log('' + result + ' document(s) deleted');
-        res.send(req.body);
+        res.status(204).send();
       }
     });
   });
