@@ -1,31 +1,11 @@
-const mongodb = require('mongodb');
+var DB = require('./db');
 var ObjectID = require('mongodb').ObjectID;
-const key_str = require('./mongodb/key.json');
-
-const user = key_str.mongoUser;
-const pass = key_str.mongoPass;
-const host = key_str.mongoHost;
-const port = key_str.mongoPort;
-const db = key_str.mongoDatabase;
-const NOT_FOUND_MESSAGE = { error: "Resource Not Exists" };
-
-// [START client]
-let uri = `mongodb://${user}:${pass}@${host}:${port}/${db}`;
-
-console.log(uri);
-
-// collection
 var cs_application_db;
 
-mongodb.MongoClient.connect(uri, (err, db) => {
-  if (err) {
-    throw err;
-  }
-  cs_application_db = db;
-  console.log("Connected correctly to server");
-});
+const NOT_FOUND_MESSAGE = { error: "Resource Not Exists" };
 
 exports.findById = function(req, res) {
+  cs_application_db = DB.getDB();
   res.contentType('application/json');
   var id = req.params.id;
   console.log('Retrieving application: ' + id);
@@ -44,6 +24,7 @@ exports.findById = function(req, res) {
 };
 
 exports.findAll = function (req, res) {
+  cs_application_db = DB.getDB();
   res.contentType('application/json');
   cs_application_db.collection('cs_application', function (err, collection) {
     collection.find().toArray(function (err, items) {
@@ -53,6 +34,7 @@ exports.findAll = function (req, res) {
 };
 
 exports.addApplication = function (req, res) {
+  cs_application_db = DB.getDB();
   res.contentType('application/json');
   var application = req.body;
   console.log('Adding application: ' + JSON.stringify(application));
@@ -61,14 +43,15 @@ exports.addApplication = function (req, res) {
       if (err) {
         res.status(400).send({ 'error': 'An error has occurred' });
       } else {
-        console.log('Success: ' + JSON.stringify(result[0]));
-        res.status(201).send(result[0]);
+        console.log('Success: ' + JSON.stringify(result["ops"][0]));
+        res.status(201).send(result["ops"][0]);
       }
     });
   });
 }
 
 exports.updateApplication = function (req, res) {
+  cs_application_db = DB.getDB();
   res.contentType('application/json');
   var id = req.params.id;
   var application = req.body;
@@ -88,6 +71,7 @@ exports.updateApplication = function (req, res) {
 }
 
 exports.deleteApplication = function (req, res) {
+  cs_application_db = DB.getDB();
   var id = req.params.id;
   console.log('Deleting application: ' + id);
   cs_application_db.collection('cs_application', function (err, collection) {

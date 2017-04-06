@@ -1,0 +1,29 @@
+[
+  {
+    "semester": "summer",
+    "year": "2012",
+    "gpa": "3.5",
+    "gre": "320",
+    "toefl": "101",
+    "school": "NYU",
+    "result": "yes"
+  },
+  {
+    "semester": "summer",
+    "year": "2012",
+    "gpa": "3.5",
+    "gre": "320",
+    "toefl": "101",
+    "school": "NYU",
+    "result": "yes"
+  },
+  {
+    "semester": "spring",
+    "year": "2015",
+    "gpa": "4.0",
+    "gre": "340",
+    "toefl": "120",
+    "school": "Yale",
+    "result": "yes"
+  }
+]
