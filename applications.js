@@ -43,8 +43,8 @@ exports.addApplication = function (req, res) {
       if (err) {
         res.status(400).send({ 'error': 'An error has occurred' });
       } else {
-        console.log('Success: ' + JSON.stringify(result[0]));
-        res.status(201).send(result[0]);
+        console.log('Success: ' + JSON.stringify(result["ops"][0]));
+        res.status(201).send(result["ops"][0]);
       }
     });
   });

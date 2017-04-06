@@ -22,9 +22,11 @@ app.use('/',router);
 
 var env = process.env.NODE_ENV || 'development';
 if (env === 'development') {
-  DB.connect(DB.MODE_PRODUCTION);
-} else {
-  DB.connect(DB.MODE_TEST);
+  DB.connect(DB.MODE_PRODUCTION, start_app);
+}
+
+function start_app() {
+  console.log("DB connection OK!");
 }
 
 console.log(env);

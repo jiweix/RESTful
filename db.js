@@ -1,6 +1,7 @@
 const mongodb = require('mongodb');
 const key_str = require('./mongodb/key.json');
 const dummy_data = require('./dummy.json');
+var async = require('async');
 
 const user = key_str.mongoUser;
 const pass = key_str.mongoPass;
@@ -30,7 +31,7 @@ var test_mode;
 exports.MODE_TEST = 'mode_test'
 exports.MODE_PRODUCTION = 'mode_production'
 
-exports.connect = function(mode) {
+exports.connect = function(mode, done) {
   if (state.db) return;
 
   var uri = mode === exports.MODE_TEST ? TEST_URI : PRODUCTION_URI
@@ -40,6 +41,7 @@ exports.connect = function(mode) {
     state.db = db
     state.mode = mode
     console.log("Connected correctly to server");
+    done();
   })
 }
 
@@ -47,23 +49,22 @@ exports.getDB = function() {
   return state.db
 }
 
-// The following functions are for test mode ONLY!!!!
-exports.dropCollection = function() {
-  if (test_mode) {
-    state.db.dropCollection("cs_application");
-  }
+
+exports.drop = function(done) {
+  if (!state.db) return done()
+  // This is faster then dropping the database
+  var collection  = state.db.collection("cs_application");
+  collection.drop(function(err, reply) {
+    done();
+  });
 }
 
-exports.loadDummyData = function() {
-  if (test_mode) {
-    state.db.createCollection("cs_application", function(err, collection){
-      for (var dummy in dummy_data) {
-        collection.insert(dummy, { safe: true }, function (err, result) {
-          if (err) {
-            console.log("Err");
-          }
-        });
-      }
-    });
+// The following functions are for test mode ONLY!!!!
+exports.createCollection = function(done) {
+  var db = state.db;
+  if (!db) {
+    return done(new Error('Missing database connection.'))
   }
+  db.createCollection("cs_application");
+  done();
 }
