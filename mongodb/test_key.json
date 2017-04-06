@@ -1,7 +1,0 @@
-{
-  "mongoHost": "ds155130.mlab.com",
-  "mongoPort": "55130",
-  "mongoDatabase": "cs_app_test",
-  "mongoUser": "csapptest",
-  "mongoPass": "csapptest"
-}
