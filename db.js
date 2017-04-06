@@ -49,22 +49,10 @@ exports.getDB = function() {
   return state.db
 }
 
-
 exports.drop = function(done) {
   if (!state.db) return done()
-  // This is faster then dropping the database
   var collection  = state.db.collection("cs_application");
   collection.drop(function(err, reply) {
     done();
   });
-}
-
-// The following functions are for test mode ONLY!!!!
-exports.createCollection = function(done) {
-  var db = state.db;
-  if (!db) {
-    return done(new Error('Missing database connection.'))
-  }
-  db.createCollection("cs_application");
-  done();
 }
