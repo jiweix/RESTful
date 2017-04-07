@@ -16,6 +16,16 @@ const TEST_APP_1 = {
   "result": "yes"
 };
 
+const TEST_APP_2 = {
+  "semester": "spring",
+  "year": "2015",
+  "gpa": "4.0",
+  "gre": "340",
+  "toefl": "120",
+  "school": "Yale",
+  "result": "yes"
+}
+
 describe('CS Applications API Tests', function() {
 
   before(function(done) {
@@ -38,6 +48,7 @@ describe('CS Applications API Tests', function() {
     });
 
     it('it should POST one application, and get it back', (done) => {
+      var id;
       chai.request('http://localhost:8080')
           .post('/applications')
           .send(TEST_APP_1)
