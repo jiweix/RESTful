@@ -2,13 +2,13 @@ var DB = require('./db');
 var ObjectID = require('mongodb').ObjectID;
 var cs_application_db;
 
-const NOT_FOUND_MESSAGE = { error: "Resource Not Exists" };
+const NOT_FOUND_MESSAGE = { "error": "Resource Not Exists" };
 
 exports.findById = function(req, res) {
   cs_application_db = DB.getDB();
   res.contentType('application/json');
   var id = req.params.id;
-  console.log('Retrieving application: ' + id);
+  // console.log('Retrieving application: ' + id);
   cs_application_db.collection('cs_application', function(err, collection) {
     if (!collection) {
       console.log("collection is null");
@@ -37,7 +37,7 @@ exports.addApplication = function (req, res) {
   cs_application_db = DB.getDB();
   res.contentType('application/json');
   var application = req.body;
-  console.log('Adding application: ' + JSON.stringify(application));
+  // console.log('Adding application: ' + JSON.stringify(application));
   cs_application_db.collection('cs_application', function (err, collection) {
     collection.insert(application, { safe: true }, function (err, result) {
       if (err) {

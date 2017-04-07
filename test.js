@@ -44,19 +44,41 @@ describe('CS Applications API Tests', function() {
           res.body.should.be.a('array');
           res.body.length.should.be.eql(0);
           done();
-        });
     });
+  });
 
-    it('it should POST one application, and get it back', (done) => {
-      var id;
-      chai.request('http://localhost:8080')
-          .post('/applications')
-          .send(TEST_APP_1)
-          .end((err, res) => {
-            res.should.have.status(201);
-            res.body.should.be.a('object');
-            res.body.should.have.property('year').eql("2012");
-            done();
+  it('it should POST one application, and GET it back by _id', (done) => {
+    var id;
+    chai.request('http://localhost:8080')
+        .post('/applications')
+        .send(TEST_APP_1)
+        .end((err, res) => {
+          id = res.body._id;
+          res.should.have.status(201);
+          res.body.should.be.a('object');
+          res.body.should.have.property('year').eql("2012");
+          chai.request('http://localhost:8080')
+              .get('/applications/' + id)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('year').eql("2012");
+                res.body.should.have.property('school').eql("NYU");
+                res.body.should.have.property('result').eql("yes");
+                res.body.should.have.property('gre').eql("320");
+                done();
           });
-      });
+    });
+  });
+
+  it('it should GET 404 error with invalid id', (done) => {
+    chai.request('http://localhost:8080')
+        .get('/applications' + "12345566666")
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          done();
+    });
+  });
+
 });
