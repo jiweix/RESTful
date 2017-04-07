@@ -9,7 +9,7 @@ const host = key_str.mongoHost;
 const port = key_str.mongoPort;
 const db = key_str.mongoDatabase;
 
-const test_key_str = require('./mongodb/test_key.json');
+const test_key_str = process.env.MONGO_ENV || require('./mongodb/test_key.json');
 
 const test_user = test_key_str.mongoUser;
 const test_pass = test_key_str.mongoPass;
