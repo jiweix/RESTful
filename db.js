@@ -1,5 +1,5 @@
 const mongodb = require('mongodb');
-const key_str = require('./mongodb/key.json');
+const key_str = process.env.MONGO_ENV || require('./mongodb/key.json');
 const dummy_data = require('./dummy.json');
 var async = require('async');
 
