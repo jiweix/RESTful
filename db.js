@@ -9,13 +9,26 @@ const host = key_str.mongoHost;
 const port = key_str.mongoPort;
 const db = key_str.mongoDatabase;
 
-const test_key_str = process.env.MONGO_ENV || require('./mongodb/test_key.json');
+var test_user;
+var test_pass;
+var test_host;
+var test_port;
+var test_db;
 
-const test_user = test_key_str.mongoUser;
-const test_pass = test_key_str.mongoPass;
-const test_host = test_key_str.mongoHost;
-const test_port = test_key_str.mongoPort;
-const test_db = test_key_str.mongoDatabase;
+if (!process.env.MONGO_ENV) {
+  const test_key_str = require('./mongodb/test_key.json');
+   test_user = test_key_str.mongoUser;
+   test_pass = test_key_str.mongoPass;
+   test_host = test_key_str.mongoHost;
+   test_port = test_key_str.mongoPort;
+   test_db = test_key_str.mongoDatabase;
+} else {
+   test_user = process.env.MONGO_USER;
+   test_pass = process.env.MONGO_PASS;
+   test_host = process.env.MONGO_HOST;
+   test_port = process.env.MONGO_PORT;
+   test_db = process.env.MONGO_DATABASE;
+}
 
 // [START client]
 var PRODUCTION_URI = `mongodb://${user}:${pass}@${host}:${port}/${db}`;
