@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "6.1.0"
+
+# command to install dependencies
+install: "npm install"
+
+# command to run tests
+script:
+  - npm test
+  # - nosetests tests/test_selenium.py
+  # - coverage run tests/test_server.py
+
+after_success:
+  - codecov
