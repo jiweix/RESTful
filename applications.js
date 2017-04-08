@@ -11,7 +11,9 @@ exports.findById = function(req, res) {
   // console.log('Retrieving application: ' + id);
   cs_application_db.collection('cs_application', function(err, collection) {
     if (!collection) {
-      console.log("collection is null");
+      //console.log("collection is null");
+      res.status(404).send(NOT_FOUND_MESSAGE);
+      return;
     }
     collection.findOne({ '_id': new ObjectID(id) }, function(err, item) {
       if (!item) {
@@ -43,7 +45,7 @@ exports.addApplication = function (req, res) {
       if (err) {
         res.status(400).send({ 'error': 'An error has occurred' });
       } else {
-        console.log('Success: ' + JSON.stringify(result["ops"][0]));
+        //console.log('Success: ' + JSON.stringify(result["ops"][0]));
         res.status(201).send(result["ops"][0]);
       }
     });
@@ -55,16 +57,26 @@ exports.updateApplication = function (req, res) {
   res.contentType('application/json');
   var id = req.params.id;
   var application = req.body;
-  console.log('Updating application: ' + id);
-  console.log(JSON.stringify(application));
+  //console.log('Updating application: ' + id);
+  //console.log(JSON.stringify(application));
   cs_application_db.collection('cs_application', function (err, collection) {
-    collection.update({ '_id': new ObjectID(id) }, application, { safe: true }, function (err, result) {
-      if (err) {
-        console.log('Error updating application: ' + err);
-        res.status(400).send({ 'error': 'An error has occurred' });
+    if (!collection) {
+      res.status(404).send(NOT_FOUND_MESSAGE);
+      return;
+    }
+    collection.findOne({ '_id': new ObjectID(id) }, function(err, item) {
+      if (!item) {
+        res.status(404).send(NOT_FOUND_MESSAGE);
       } else {
-        console.log('' + result + ' document(s) updated');
-        res.status(200).send(application);
+        collection.update({ '_id': new ObjectID(id) }, application, { safe: true }, function (err, result) {
+          if (err) {
+            //console.log('Error updating application: ' + err);
+            res.status(400).send({ 'error': 'An error has occurred' });
+          } else {
+            //console.log('' + result + ' document(s) updated');
+            res.status(200).send(application);
+          }
+        });
       }
     });
   });
@@ -73,7 +85,7 @@ exports.updateApplication = function (req, res) {
 exports.deleteApplication = function (req, res) {
   cs_application_db = DB.getDB();
   var id = req.params.id;
-  console.log('Deleting application: ' + id);
+  //console.log('Deleting application: ' + id);
   cs_application_db.collection('cs_application', function (err, collection) {
     collection.remove({ '_id': new ObjectID(id) }, { safe: true }, function (err, result) {
       if (err) {

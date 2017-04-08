@@ -3,6 +3,7 @@ var DB = require('./db');
 let chai = require('chai');
 let chaiHttp = require('chai-http');
 let should = chai.should();
+let assert = chai.assert;
 
 chai.use(chaiHttp);
 
@@ -26,6 +27,9 @@ const TEST_APP_2 = {
   "result": "yes"
 }
 
+// add one record to database before test, and save the _id for testing.
+var _id;
+
 describe('CS Applications API Tests', function() {
 
   before(function(done) {
@@ -33,7 +37,15 @@ describe('CS Applications API Tests', function() {
   })
 
   beforeEach(function(done) {
-    DB.drop(done);
+    DB.drop(function() {
+      chai.request('http://localhost:8080')
+          .post('/applications')
+          .send(TEST_APP_1)
+          .end((err, res) => {
+            _id = res.body._id;
+            done();
+          });
+    });
   })
 
   it('it should GET all the applications', (done) => {
@@ -42,7 +54,20 @@ describe('CS Applications API Tests', function() {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('array');
-          res.body.length.should.be.eql(0);
+          done();
+    });
+  });
+
+  it('it should GET one application by _id', (done) => {
+    chai.request('http://localhost:8080')
+        .get('/applications/' + _id)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('year').eql("2012");
+          res.body.should.have.property('school').eql("NYU");
+          res.body.should.have.property('result').eql("yes");
+          res.body.should.have.property('gre').eql("320");
           done();
     });
   });
@@ -77,8 +102,46 @@ describe('CS Applications API Tests', function() {
         .end((err, res) => {
           res.should.have.status(404);
           res.body.should.be.a('object');
+          //console.log(res.body);
           done();
     });
   });
 
+  it('it should PUT one application, and change the information in database', (done) => {
+    chai.request('http://localhost:8080')
+        .put('/applications/' + _id)
+        .send(TEST_APP_2)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('year').eql("2015");
+          res.body.should.have.property('school').eql("Yale");
+          res.body.should.have.property('result').eql("yes");
+          res.body.should.have.property('gre').eql("340");
+          chai.request('http://localhost:8080')
+              .get('/applications/' + _id)
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                res.body.should.have.property('year').eql("2015");
+                res.body.should.have.property('school').eql("Yale");
+                res.body.should.have.property('result').eql("yes");
+                res.body.should.have.property('gre').eql("340");
+                done();
+          });
+    });
+  });
+
+  it('it should PUT one application with invalid id and get 404 error', (done) => {
+    chai.request('http://localhost:8080')
+        .put('/applications' + "12345566666")
+        .send(TEST_APP_2)
+        .end((err, res) => {
+          res.should.have.status(404);
+          res.body.should.be.a('object');
+          //console.log(err);
+          //console.log(res.body);
+          done();
+    });
+  });
 });
