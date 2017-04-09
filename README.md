@@ -34,6 +34,14 @@ Once the VM is up you can use it with:
     $ cd /vagrant
     $ npm start
 
+For testing, mocha and chai is used. The following command would run the test.js.
+
+    $ npm test
+
+To get code coverage, istanbul is used.
+
+    $ npm run-script coverage
+
 When you are done, you can use `Ctrl+C` to stop the server and then exit and shut down the vm with:
 
     $ exit
