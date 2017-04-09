@@ -87,12 +87,22 @@ exports.deleteApplication = function (req, res) {
   var id = req.params.id;
   //console.log('Deleting application: ' + id);
   cs_application_db.collection('cs_application', function (err, collection) {
-    collection.remove({ '_id': new ObjectID(id) }, { safe: true }, function (err, result) {
-      if (err) {
-        res.send({ 'error': 'An error has occurred - ' + err });
-      } else {
-        console.log('' + result + ' document(s) deleted');
+    if (!collection) {
+      res.status(204).send();
+      return;
+    }
+    collection.findOne({ '_id': new ObjectID(id) }, function(err, item) {
+      if (!item) {
         res.status(204).send();
+      } else {
+        collection.remove({ '_id': new ObjectID(id) }, { safe: true }, function (err, result) {
+          if (err) {
+            res.status(400).send({ 'error': 'An error has occurred while deleting'});
+          } else {
+            //console.log('' + result + ' document(s) deleted');
+            res.status(204).send();
+          }
+        });
       }
     });
   });

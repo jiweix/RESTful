@@ -4,7 +4,6 @@ let chai = require('chai');
 let chaiHttp = require('chai-http');
 let should = chai.should();
 let assert = chai.assert;
-
 chai.use(chaiHttp);
 
 const TEST_APP_1 = {
@@ -164,7 +163,7 @@ describe('CS Applications API Tests', function() {
                 done();
           });
     });
-  });  
+  });
 
   it('it should POST one invalid application format and get 400 error', (done) => {
     chai.request('http://localhost:8080')
@@ -176,4 +175,39 @@ describe('CS Applications API Tests', function() {
           done();
     });
   });
+
+  it('it should DELETE one application and get 204', (done) => {
+    chai.request('http://localhost:8080')
+        .delete('/applications/' + _id)
+        .end((err, res) => {
+          res.should.have.status(204);
+          res.body.should.be.empty;
+          chai.request('http://localhost:8080')
+              .get('/applications')
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                res.body.should.have.lengthOf(0);
+                done();
+          });
+    });
+  });
+
+  it('it should DELETE one invalid application and get 204, not affecting any data', (done) => {
+    chai.request('http://localhost:8080')
+        .delete('/applications/' + "12345566666")
+        .end((err, res) => {
+          res.should.have.status(204);
+          res.body.should.be.empty;
+          chai.request('http://localhost:8080')
+              .get('/applications')
+              .end((err, res) => {
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+                res.body.should.have.lengthOf(1);
+                done();
+          });
+    });
+  });
+
 });
