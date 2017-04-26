@@ -67,12 +67,24 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y nodejs
     sudo apt-get install -y build-essential
     sudo apt-get -y autoremove
+    # Cloud Foundry client 
+    wget -O cf-cli-installer_6.24.0_x86-64.deb 'https://cli.run.pivotal.io/stable?release=debian64&version=6.24.0&source=github-rel'
+    sudo dpkg -i cf-cli-installer_6.24.0_x86-64.deb
+    rm cf-cli-installer_6.24.0_x86-64.deb
+    # IBM container command line tools
+    sudo -H -u vagrant bash -c "echo Y | cf install-plugin https://static-ice.ng.bluemix.net/ibm-containers-linux_x64"
+
     sudo ln -s "$(which nodejs)" /usr/bin/node
     # Install app dependencies
     cd /vagrant
     npm install
   SHELL
 
+
+  # add test docker image
+  config.vm.provision "docker" do |d|
+    d.pull_images "hello-world"
+  end
 
   ######################################################################
   # Add MongoDB docker container
@@ -90,7 +102,7 @@ Vagrant.configure("2") do |config|
   #    args: "--restart=always -d --name mongo -h mongo -v '/var/lib/mongo/data:/data/db' -p '27017:27017'"
   #end
 
-  # initialize the mongoDB user 
+  # initialize the mongoDB user
   #config.vm.provision "shell", inline: <<-SHELL
   #  cd /vagrant
   #  sudo docker cp create_mongo_admin.js mongo:/create_mongo_admin.js
@@ -100,5 +112,5 @@ Vagrant.configure("2") do |config|
   #SHELL
 end
 
-# to test if docker mongo is working: 
+# to test if docker mongo is working:
 # docker run -it --rm --link mongo:mongo mongo mongo -u user -p user mongo/admin
